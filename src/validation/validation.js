@@ -4,11 +4,11 @@ import z from 'zod';
 const userSchema = z.object({
   firstname: z
     .string()
-    .min(3, 'Minimum 03 chararcters are required in firstName')
-    .max(50, 'Maximum 50 characters are allowed in the firstName'),
+    .min(3, 'Minimum 03 characters are required in firstname')
+    .max(50, 'Maximum 50 characters are allowed in the firstname'),
   lastname: z
     .string()
-    .min(3, 'Minimum 03 chararcters are required in lastname')
+    .min(3, 'Minimum 03 characters are required in lastname')
     .max(50, 'Maximum 50 characters are allowed in the lastname')
     .optional(),
   email: z.email().max(128, 'Maximum 128 characters are required in the email'),
@@ -22,11 +22,11 @@ const userSchema = z.object({
 const registerBodySchema = z.object({
   firstname: z
     .string()
-    .min(3, 'Minimum 03 chararcters are required in firstName')
-    .max(50, 'Maximum 50 characters are allowed in the firstName'),
+    .min(3, 'Minimum 03 characters are required in firstname')
+    .max(50, 'Maximum 50 characters are allowed in the firstname'),
   lastname: z
     .string()
-    .min(3, 'Minimum 03 chararcters are required in lastname')
+    .min(3, 'Minimum 03 characters are required in lastname')
     .max(50, 'Maximum 50 characters are allowed in the lastname')
     .optional(),
   email: z.email().max(128, 'Maximum 128 characters are allowed in the email'),
