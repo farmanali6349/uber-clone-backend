@@ -25,4 +25,8 @@ const generateHash = async password => {
   }
 };
 
-export { generateHash, generateAuthToken, comparePassword };
+const decodeToken = token => {
+  return jwt.verify(token, JWT_SECRET);
+};
+
+export { generateHash, generateAuthToken, comparePassword, decodeToken };

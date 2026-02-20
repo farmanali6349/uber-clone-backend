@@ -122,4 +122,23 @@ const loginUser = async (req, res, next) => {
     });
   }
 };
-export { registerUser, loginUser };
+
+// Always Use auth middleware before this route
+const getUserProfile = async (req, res, next) => {
+  const user = req?.user;
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: 'Unauthorized :: Invalid, Expired Or No Token',
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: 'Profile Data Retrieved Successfully',
+    data: user,
+  });
+};
+
+export { registerUser, loginUser, getUserProfile };

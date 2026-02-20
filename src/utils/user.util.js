@@ -52,4 +52,23 @@ const findUserByEmail = async email => {
   }
 };
 
-export { createUser, findUserByEmail };
+const findUserById = async userId => {
+  try {
+    const queryResult = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId));
+
+    const user = Array.isArray(queryResult) ? queryResult[0] : queryResult;
+
+    if (!Boolean(user)) {
+      return null;
+    }
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export { createUser, findUserByEmail, findUserById };
