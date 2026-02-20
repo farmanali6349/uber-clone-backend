@@ -1,0 +1,36 @@
+{
+  "name": "uber-clone-backend",
+  "version": "1.0.0",
+  "description": "Uber App Clone Backend",
+  "keywords": [
+    "Uber",
+    "Backend"
+  ],
+  "homepage": "https://github.com/farmanali6349/uber-clone-backend#readme",
+  "bugs": {
+    "url": "https://github.com/farmanali6349/uber-clone-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/farmanali6349/uber-clone-backend.git"
+  },
+  "license": "ISC",
+  "author": "Farman Ali",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.13",
+    "prettier": "^3.8.1"
+  }
+}
