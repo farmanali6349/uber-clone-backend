@@ -5,11 +5,11 @@ import { findUserById } from '../utils/user.util.js';
 
 const authUser = asyncHandler(async (req, res, next) => {
   const token =
-    req?.cookies?.token ||
-    req?.headers?.authorization ||
-    req?.headers?.authorization?.split(' ')[1];
+    req?.cookies?.token || req?.headers?.authorization?.split(' ')[1];
 
-  const authError = new ApiError.unauthorized(
+  console.log('Token :: ', token);
+
+  const authError = ApiError.unauthorized(
     'Unauthorized :: Invalid, Expired Or No Token'
   );
 
