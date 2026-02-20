@@ -1,6 +1,13 @@
-import { generateAuthToken, generateHash } from '../utils/auth.util.js';
+import {
+  comparePassword,
+  generateAuthToken,
+  generateHash,
+} from '../utils/auth.util.js';
 import { createUser, findUserByEmail } from '../utils/user.util.js';
-import { registerBodySchema } from '../validation/validation.js';
+import {
+  loginBodySchema,
+  registerBodySchema,
+} from '../validation/validation.js';
 
 const registerUser = async (req, res, next) => {
   try {
@@ -57,4 +64,62 @@ const registerUser = async (req, res, next) => {
   }
 };
 
-export { registerUser };
+const loginUser = async (req, res, next) => {
+  // VALIDATING REQ BODY
+  const validationResult = loginBodySchema.safeParse(req.body);
+
+  if (!validationResult.success) {
+    return res.status(400).json({
+      success: false,
+      message:
+        'Invalid Request Body For Login :: ' + validationResult.error.message,
+      error: JSON.stringify(validationResult.error.issues),
+    });
+  }
+
+  try {
+    const reqBody = validationResult.data;
+
+    // FINDING IF USER EXISTS
+    const user = await findUserByEmail(reqBody.email);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unable To Login',
+        error: 'Invalid email or password',
+      });
+    }
+
+    // COMPARING THE PASSWORD
+    const isPasswordRight = await comparePassword(
+      reqBody.password,
+      user.password
+    );
+
+    if (!isPasswordRight) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unable To Login',
+        error: 'Invalid email or password',
+      });
+    }
+
+    // AUTHENTIC USER
+
+    const authToken = generateAuthToken({ id: user.id });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Successfully Loggedin',
+      authToken,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Error While Logging In The User',
+      error,
+    });
+  }
+};
+export { registerUser, loginUser };

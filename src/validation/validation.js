@@ -40,4 +40,15 @@ const registerBodySchema = z.object({
     ),
 });
 
-export { userSchema, registerBodySchema };
+const loginBodySchema = z.object({
+  email: z.email().max(128, 'Maximum 128 characters are required in the email'),
+  password: z
+    .string()
+    .min(6, 'Password must have minimum 06 characters')
+    .max(16, 'Password must have maximum 16 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,}$/
+    ),
+});
+
+export { userSchema, registerBodySchema, loginBodySchema };

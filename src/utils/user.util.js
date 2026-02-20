@@ -41,6 +41,11 @@ const findUserByEmail = async email => {
       .where(eq(users.email, email));
 
     const user = Array.isArray(queryResult) ? queryResult[0] : queryResult;
+
+    if (!Boolean(user)) {
+      return null;
+    }
+
     return user;
   } catch (error) {
     throw error;
