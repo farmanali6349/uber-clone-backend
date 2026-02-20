@@ -29,7 +29,7 @@ const registerBodySchema = z.object({
     .min(3, 'Minimum 03 chararcters are required in lastname')
     .max(50, 'Maximum 50 characters are allowed in the lastname')
     .optional(),
-  email: z.email().max(128, 'Maximum 128 characters are required in the email'),
+  email: z.email().max(128, 'Maximum 128 characters are allowed in the email'),
   password: z
     .string()
     .min(6, 'Password must have minimum 06 characters')
@@ -39,13 +39,7 @@ const registerBodySchema = z.object({
 
 const loginBodySchema = z.object({
   email: z.email().max(128, 'Maximum 128 characters are required in the email'),
-  password: z
-    .string()
-    .min(6, 'Password must have minimum 06 characters')
-    .max(16, 'Password must have maximum 16 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,}$/
-    ),
+  password: z.string().max(16, 'Password must have maximum 16 characters'),
 });
 
 export { userSchema, registerBodySchema, loginBodySchema };

@@ -2,6 +2,7 @@ import { users } from '../db/schema.js';
 import { db } from '../db/db.js';
 import { userSchema } from '../validation/validation.js';
 import { eq } from 'drizzle-orm';
+import { ValidationError } from './ValidationError.js';
 
 const validateUserSchema = userData => {
   const result = userSchema.safeParse(userData);

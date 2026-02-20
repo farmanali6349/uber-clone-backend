@@ -5,3 +5,5 @@ class ValidationError extends Error {
     this.issues = issues;
   }
 }
+
+export { ValidationError };

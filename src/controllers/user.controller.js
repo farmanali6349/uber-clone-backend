@@ -80,7 +80,7 @@ const loginUser = async (req, res, next) => {
       success: false,
       message:
         'Invalid Request Body For Login :: ' + validationResult.error.message,
-      error: JSON.stringify(validationResult.error.issues),
+      error: validationResult.error.issues,
     });
   }
 
@@ -125,7 +125,7 @@ const loginUser = async (req, res, next) => {
     return res.status(500).json({
       success: false,
       message: 'Internal Error While Logging In The User',
-      error,
+      error: error?.message,
     });
   }
 };
