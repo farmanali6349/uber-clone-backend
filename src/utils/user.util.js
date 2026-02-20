@@ -2,13 +2,16 @@ import { users } from '../db/schema.js';
 import { db } from '../db/db.js';
 import { userSchema } from '../validation/validation.js';
 import { eq } from 'drizzle-orm';
-import { ValidationError } from './ValidationError.js';
+import { ApiError } from './ApiError.util.js';
 
 const validateUserSchema = userData => {
   const result = userSchema.safeParse(userData);
 
   if (!result.success) {
-    throw new ValidationError(result.error.issues);
+    throw ApiError.badRequest(
+      'Invalid User Data For Creating New User',
+      result.error.issues
+    );
   }
 
   return result.data;
@@ -24,7 +27,11 @@ const createUser = async userData => {
     const { id, firstname, lastname, email } = user;
     return { id, firstname, lastname, email };
   } catch (error) {
-    throw error;
+    throw new ApiError(
+      500,
+      `Error occurred during user creation: ${error.message}`,
+      error
+    );
   }
 };
 
@@ -43,7 +50,7 @@ const findUserByEmail = async email => {
 
     return user;
   } catch (error) {
-    throw error;
+    throw new ApiError(500, 'Error occured in findUserByEmail()', error);
   }
 };
 
@@ -62,7 +69,7 @@ const findUserById = async userId => {
 
     return user;
   } catch (error) {
-    throw error;
+    throw new ApiError(500, 'Error occured in findUserById()', error);
   }
 };
 
