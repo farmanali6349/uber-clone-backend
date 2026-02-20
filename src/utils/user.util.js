@@ -7,13 +7,7 @@ const validateUserSchema = userData => {
   const result = userSchema.safeParse(userData);
 
   if (!result.success) {
-    throw new Error(
-      JSON.stringify({
-        type: 'VALIDATION_ERROR',
-        issues: result.error.issues,
-        message: 'User data validation failed',
-      })
-    );
+    throw new ValidationError(result.error.issues);
   }
 
   return result.data;

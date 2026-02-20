@@ -1,5 +1,4 @@
-import { integer } from 'drizzle-orm/gel-core';
-import z, { email } from 'zod';
+import z from 'zod';
 
 // User Schema
 const userSchema = z.object({
@@ -35,9 +34,7 @@ const registerBodySchema = z.object({
     .string()
     .min(6, 'Password must have minimum 06 characters')
     .max(16, 'Password must have maximum 16 characters')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,}$/
-    ),
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{6,}$/),
 });
 
 const loginBodySchema = z.object({

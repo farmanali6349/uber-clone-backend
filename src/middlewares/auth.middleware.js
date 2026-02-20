@@ -19,7 +19,7 @@ const authUser = async (req, res, next) => {
 
     const userId = decoded?.id ? Number.parseInt(decoded?.id) : null;
 
-    if (!userId || userId === NaN) {
+    if (!userId || Number.isNaN(userId)) {
       return res.status(401).json({
         success: false,
         message: 'Unauthorized :: Invalid, Expired Or No Token',
@@ -46,6 +46,17 @@ const authUser = async (req, res, next) => {
 
     next();
   } catch (error) {
+    if (
+      ['JsonWebTokenError', 'TokenExpiredError', 'NotBeforeError'].includes(
+        error?.name
+      )
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized :: Invalid, Expired Or No Token',
+      });
+    }
+
     console.log(error);
     return res.status(500).json({
       success: false,

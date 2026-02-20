@@ -56,10 +56,17 @@ const registerUser = async (req, res, next) => {
     });
   } catch (error) {
     // BUG GHOST ERROR COMES HERE DUE TO VALIDATION IN createUser
+
+    if (error.name === 'VALIDATION_ERROR') {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+        details: error.issues,
+      });
+    }
     return res.status(500).json({
       success: false,
       message: 'Error occured while registering user',
-      error,
     });
   }
 };
