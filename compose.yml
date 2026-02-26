@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  # Backend Server
+  app:
+    image: uber_backend
+    container_name: cont_uber_backend
+    ports:
+      - '4000:4000'
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgres://postgres:admin@db:5432/uber
+      JWT_SECRET: 0a55cbcdbde1718bd77d323e6fe8dd4466258cd8e814a5e897edfffb6ef71c05
+      JWT_EXPIRES_IN: 24h
+      CORS_ORIGIN: '*'
+    depends_on:
+      - db
+    networks:
+      - uber_network
+    restart: always
+
+  # Database
+  db:
+    image: postgres:17.4
+    container_name: uber_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: uber
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - uber_network
+    restart: always
+
+# Storage
+volumes:
+  postgres_data:
+    driver: local
+
+# Network
+networks:
+  uber_network:
+    driver: bridge

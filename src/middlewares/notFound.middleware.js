@@ -1,7 +1,7 @@
 import { ApiError } from '../utils/ApiError.util.js';
 
-const notFound = (req, res, next) => {
-  const error = new ApiError.notFound(`Route ${req.originalUrl} Not Found`);
+const notFound = (err, req, res, next) => {
+  const error = ApiError.notFound(`Route ${req.originalUrl} Not Found`, err);
 
   next(error);
 };

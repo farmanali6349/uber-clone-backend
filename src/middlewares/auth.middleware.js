@@ -7,8 +7,6 @@ const authUser = asyncHandler(async (req, res, next) => {
   const token =
     req?.cookies?.token || req?.headers?.authorization?.split(' ')[1];
 
-  console.log('Token :: ', token);
-
   const authError = ApiError.unauthorized(
     'Unauthorized :: Invalid, Expired Or No Token'
   );
