@@ -1,10 +1,13 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db/db.js';
 import { tokenBlacklist } from '../db/schema.js';
-import { ApiError } from './ApiError.util.js';
+
 const blacklistToken = async authToken => {
   try {
-    const queryRes = await db.insert(tokenBlacklist).values({ authToken });
+    const queryRes = await db
+      .insert(tokenBlacklist)
+      .values({ authToken })
+      .returning();
     const token = Array.isArray(queryRes) ? queryRes[0] : queryRes;
 
     if (!token) {
@@ -35,7 +38,7 @@ const findToken = async authToken => {
     return token;
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Error occured in blacklisting Token :: ', error);
+      console.log('Error occured in finding Token :: ', error);
     }
     throw error;
   }

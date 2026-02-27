@@ -73,7 +73,6 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await findUserByEmail(reqBody.email);
 
   const loginError = ApiError.badRequest(
-    400,
     'Unable to Login, Invalid email or password'
   );
 
@@ -105,7 +104,7 @@ const loginUser = asyncHandler(async (req, res) => {
     httpOnly: isProduction,
     secure: isProduction,
     maxAge: 24 * 60 * 60 * 1000,
-    ...(isProduction ?? { sameSite: 'strict' }),
+    ...(isProduction ? { sameSite: 'strict' } : {}),
   });
   return res.status(200).json(apiResponse.toJSON());
 });
@@ -130,7 +129,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   const token = req?.authToken;
 
   if (!token) {
-    throw new ApiError(500, 'Unable To Login, Token Empty');
+    throw new ApiError(401, 'Unable To Logout, Invalid or missing token');
   }
 
   const blacklistedToken = await blacklistToken(token);
@@ -141,16 +140,16 @@ const logoutUser = asyncHandler(async (req, res) => {
     res.clearCookie('authToken', {
       httpOnly: isProduction,
       secure: isProduction,
-      ...(isProduction ?? { sameSite: 'strict' }),
+      ...(isProduction ? { sameSite: 'strict' } : {}),
     });
     return res.status(200).json(
       new ApiResponse(200, 'Logged Out Successfully.', {
-        authToken: blacklistToken,
+        authToken: token,
       }).toJSON()
     );
   }
 
-  throw new ApiError(500, 'Unable to Login User');
+  throw new ApiError(500, 'Unable to Logout User');
 });
 
 export { registerUser, loginUser, getUserProfile, logoutUser };
