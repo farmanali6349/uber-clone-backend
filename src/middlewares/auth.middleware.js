@@ -1,17 +1,25 @@
 import { ApiError } from '../utils/ApiError.util.js';
 import { asyncHandler } from '../utils/asyncHandler.util.js';
 import { decodeToken } from '../utils/auth.util.js';
+import { findToken } from '../utils/authToken.utils.js';
 import { findUserById } from '../utils/user.util.js';
 
 const authUser = asyncHandler(async (req, res, next) => {
   const token =
-    req?.cookies?.token || req?.headers?.authorization?.split(' ')[1];
+    req?.cookies?.authToken || req?.headers?.authorization?.split(' ')[1];
 
   const authError = ApiError.unauthorized(
     'Unauthorized :: Invalid, Expired Or No Token'
   );
 
   if (!token) {
+    throw authError;
+  }
+
+  // Check if token is blacklisted
+  const blacklistedToken = await findToken(token);
+
+  if (blacklistedToken) {
     throw authError;
   }
 
@@ -37,6 +45,8 @@ const authUser = asyncHandler(async (req, res, next) => {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
+
+  req.authToken = token;
 
   next();
 });

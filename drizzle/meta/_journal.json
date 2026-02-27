@@ -8,6 +8,13 @@
       "when": 1771586997345,
       "tag": "0000_wet_onslaught",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772111703623,
+      "tag": "0001_simple_harpoon",
+      "breakpoints": true
     }
   ]
 }

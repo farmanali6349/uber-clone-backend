@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/config.js';
+import { ApiError } from './ApiError.util.js';
 
 const generateAuthToken = data => {
   return jwt.sign(data, JWT_SECRET, {
@@ -26,7 +27,13 @@ const generateHash = async password => {
 };
 
 const decodeToken = token => {
-  return jwt.verify(token, JWT_SECRET);
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch (error) {
+    throw ApiError.unauthorized(
+      'Invalid Token or Expired Token. Please SignIn'
+    );
+  }
 };
 
 export { generateHash, generateAuthToken, comparePassword, decodeToken };

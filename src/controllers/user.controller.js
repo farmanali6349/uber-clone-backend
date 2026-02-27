@@ -6,6 +6,7 @@ import {
   generateAuthToken,
   generateHash,
 } from '../utils/auth.util.js';
+import { blacklistToken } from '../utils/authToken.utils.js';
 import { createUser, findUserByEmail } from '../utils/user.util.js';
 import {
   loginBodySchema,
@@ -71,9 +72,9 @@ const loginUser = asyncHandler(async (req, res) => {
   // FINDING IF USER EXISTS
   const user = await findUserByEmail(reqBody.email);
 
-  const loginError = ApiError.badRequest(400, 'Unable to Login', [
-    'Invalid email or password',
-  ]);
+  const loginError = ApiError.badRequest(
+    'Unable to Login, Invalid email or password'
+  );
 
   if (!user) {
     throw loginError;
@@ -96,11 +97,20 @@ const loginUser = asyncHandler(async (req, res) => {
   const apiResponse = new ApiResponse(200, 'Successfully LoggedIn', {
     authToken,
   });
+
+  // Setting Up Cookies
+  const isProduction = Boolean(process.env.NODE_ENV === 'production');
+  res.cookie('authToken', authToken, {
+    httpOnly: isProduction,
+    secure: isProduction,
+    maxAge: 24 * 60 * 60 * 1000,
+    ...(isProduction ? { sameSite: 'strict' } : {}),
+  });
   return res.status(200).json(apiResponse.toJSON());
 });
 
 // Always Use auth middleware before this route
-const getUserProfile = async (req, res, next) => {
+const getUserProfile = asyncHandler((req, res) => {
   const user = req?.user;
 
   if (!user) {
@@ -113,6 +123,33 @@ const getUserProfile = async (req, res, next) => {
     user
   );
   return res.status(200).json(response.toJSON());
-};
+});
 
-export { registerUser, loginUser, getUserProfile };
+const logoutUser = asyncHandler(async (req, res) => {
+  const token = req?.authToken;
+
+  if (!token) {
+    throw new ApiError(401, 'Unable To Logout, Invalid or missing token');
+  }
+
+  const blacklistedToken = await blacklistToken(token);
+
+  if (blacklistedToken) {
+    // Clearing The Cookies
+    const isProduction = Boolean(process.env.NODE_ENV === 'production');
+    res.clearCookie('authToken', {
+      httpOnly: isProduction,
+      secure: isProduction,
+      ...(isProduction ? { sameSite: 'strict' } : {}),
+    });
+    return res.status(200).json(
+      new ApiResponse(200, 'Logged Out Successfully.', {
+        authToken: token,
+      }).toJSON()
+    );
+  }
+
+  throw new ApiError(500, 'Unable to Logout User');
+});
+
+export { registerUser, loginUser, getUserProfile, logoutUser };
