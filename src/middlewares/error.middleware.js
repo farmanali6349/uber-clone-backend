@@ -14,7 +14,12 @@ const errorHandler = (err, req, res, next) => {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    console.error('Error: ', error);
+    console.error('Error: ', {
+      success: error.success,
+      message: error.message,
+      errors: error.errors,
+      ...(process.env.NODE_ENV === 'development' && { stack: error?.stack }),
+    });
   }
 
   return res.status(error.statusCode).json({
