@@ -61,8 +61,29 @@ export const captainSchema = z.object({
   socketId: z.string().optional(),
 });
 
+// Add this to your validation.js
+export const registerCaptainBodySchema = z.object({
+  firstname: z
+    .string()
+    .min(3, 'Minimum 03 characters are required in firstname')
+    .max(50, 'Maximum 50 characters are allowed in the firstname'),
+  lastname: z
+    .string()
+    .min(3, 'Minimum 03 characters are required in lastname')
+    .max(50, 'Maximum 50 characters are allowed in the lastname')
+    .optional(),
+  email: z.email().max(128, 'Maximum 128 characters are allowed in the email'),
+  password: z
+    .string()
+    .min(6, 'Password must have minimum 06 characters')
+    .max(16, 'Password must have maximum 16 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{6,}$/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.'
+    ),
+});
 // VEHICLE RELATED SCHEMAS
-const vehicleTypeEnums = z.enum(['car', 'bike', 'rickshaw']); // Vehicle type enums
+const vehicleTypeEnums = z.enum(['bike', 'rikshaw', 'car']); // Vehicle type enums
 export const vehicleSchema = z.object({
   vehicleType: vehicleTypeEnums,
   capacity: z.number().positive().min(1).default(1),
@@ -77,5 +98,5 @@ export const vehicleSchema = z.object({
   isActive: z.boolean().default(false),
   lat: z.number().optional(),
   lng: z.number().optional(),
-  captainId: z.number().positive(),
+  captainId: z.number().int().positive('Captain ID must be a positive integer'),
 });
