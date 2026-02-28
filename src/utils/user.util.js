@@ -1,20 +1,23 @@
 import { users } from '../db/schema.js';
 import { db } from '../db/db.js';
-import { userSchema } from '../validation/validation.js';
+import {
+  registerUserBodySchema,
+  userSchema,
+} from '../validation/validation.js';
 import { eq } from 'drizzle-orm';
 import { ApiError } from './ApiError.util.js';
+import { validateSchema } from './validation.util.js';
 
 const validateUserSchema = userData => {
-  const result = userSchema.safeParse(userData);
-
-  if (!result.success) {
-    throw ApiError.badRequest(
-      'Invalid User Data For Creating New User',
-      result.error.issues
+  try {
+    return validateSchema(
+      userSchema,
+      userData,
+      'Invalid User Data For Creating New User'
     );
+  } catch (error) {
+    throw error;
   }
-
-  return result.data;
 };
 
 const createUser = async userData => {
@@ -30,7 +33,7 @@ const createUser = async userData => {
         id: users.id,
         firstname: users.firstname,
         lastname: users.lastname,
-        email: users.lastname,
+        email: users.email,
         socketId: users.socketId,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,

@@ -8,6 +8,7 @@ import {
 } from '../utils/auth.util.js';
 import { blacklistToken } from '../utils/authToken.utils.js';
 import { createUser, findUserByEmail } from '../utils/user.util.js';
+import { validateSchema } from '../utils/validation.util.js';
 import {
   loginBodySchema,
   registerUserBodySchema,
@@ -15,16 +16,11 @@ import {
 
 export const registerUser = asyncHandler(async (req, res) => {
   // VALIDATING REQUEST BODY
-  const validationResult = registerUserBodySchema.safeParse(req.body);
-  if (!validationResult.success) {
-    throw new ApiError(
-      400,
-      'Invalid Register Body',
-      validationResult.error.issues
-    );
-  }
-
-  const reqBody = validationResult.data;
+  const reqBody = validateSchema(
+    registerUserBodySchema,
+    req?.body,
+    'Invalid User Register Body'
+  );
 
   // CREATING NEW USER
   // Hashing The Password

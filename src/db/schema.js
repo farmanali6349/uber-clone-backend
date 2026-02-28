@@ -7,14 +7,15 @@ import {
   index,
   boolean,
   pgEnum as pgEnumFn,
+  doublePrecision,
 } from 'drizzle-orm/pg-core';
 
-import { eq, relations } from 'drizzle-orm';
+import { relations } from 'drizzle-orm';
 
 // Define the enum properly
 export const vehicleTypeEnum = pgEnumFn('vehicle_type', [
   'bike',
-  'rikshaw',
+  'rickshaw',
   'car',
 ]);
 
@@ -34,7 +35,7 @@ export const users = pgTable(
   userTable => {
     return {
       emailIdx: index('users_email_idx').on(userTable.email),
-      socketIdIdx: index('users_socked_id_idx').on(userTable.socketId),
+      socketIdIdx: index('users_socket_id_idx').on(userTable.socketId),
     };
   }
 );
@@ -78,7 +79,7 @@ export const captains = pgTable(
         vehicles: many(vehicles),
       })),
       emailIdx: index('captains_email_idx').on(captainTable.email),
-      socketIdIdx: index('captains_socked_id_idx').on(captainTable.socketId),
+      socketIdIdx: index('captains_socket_id_idx').on(captainTable.socketId),
     };
   }
 );
@@ -94,8 +95,8 @@ export const vehicles = pgTable(
     plate: varchar('plate', { length: 10 }).notNull().unique(),
     color: varchar('color', { length: 20 }),
     isActive: boolean('is_active').default(false),
-    lat: integer('lat'),
-    lng: integer('lng'),
+    lat: doublePrecision('lat'),
+    lng: doublePrecision('lng'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
     captainId: integer('captain_id')

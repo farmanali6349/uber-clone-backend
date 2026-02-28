@@ -5,9 +5,13 @@ import { validateVehicleRegisterBody } from '../utils/vehicle.util.js';
 
 export const registerVehicle = asyncHandler(async (req, res) => {
   // Validating Register Vehicle Body
+  const { vehicleType, capacity, plate, color } = req.body ?? {};
   const vehicleRegisterBody = validateVehicleRegisterBody({
-    ...req?.body,
-    captainId: req?.captain?.id,
+    vehicleType,
+    capacity,
+    plate,
+    color,
+    captainId: req.captain.id,
   });
 
   // CREATING NEW VEHICLE

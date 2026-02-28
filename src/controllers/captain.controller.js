@@ -60,7 +60,6 @@ export const loginCaptain = asyncHandler(async (req, res) => {
   }
 
   // AUTHENTIC CAPTAIN
-
   const authToken = generateAuthToken({ captainId: captain.id });
 
   const apiResponse = new ApiResponse(200, 'Successfully LoggedIn', {
@@ -82,6 +81,7 @@ export const loginCaptain = asyncHandler(async (req, res) => {
 export const getCaptainProfile = asyncHandler((req, res) => {
   const captain = req?.captain;
 
+  // In case you miss to use auth middleware or auth middleware failed to link captain
   if (!captain) {
     throw ApiError.unauthorized('Unauthorized Invalid, Expired Or No Token');
   }
