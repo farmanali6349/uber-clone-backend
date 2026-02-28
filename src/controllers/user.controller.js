@@ -8,30 +8,19 @@ import {
 } from '../utils/auth.util.js';
 import { blacklistToken } from '../utils/authToken.utils.js';
 import { createUser, findUserByEmail } from '../utils/user.util.js';
+import { validateSchema } from '../utils/validation.util.js';
 import {
   loginBodySchema,
-  registerBodySchema,
+  registerUserBodySchema,
 } from '../validation/validation.js';
 
-const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
   // VALIDATING REQUEST BODY
-  const validationResult = registerBodySchema.safeParse(req.body);
-  if (!validationResult.success) {
-    throw new ApiError(
-      400,
-      'Invalid Register Body',
-      validationResult.error.issues
-    );
-  }
-
-  const reqBody = validationResult.data;
-
-  // VALIDATING IF USER ALREADY EXISTS
-  const existingUser = await findUserByEmail(reqBody.email);
-
-  if (existingUser) {
-    throw new ApiError(400, 'Unable to register User, Email already exists');
-  }
+  const reqBody = validateSchema(
+    registerUserBodySchema,
+    req?.body,
+    'Invalid User Register Body'
+  );
 
   // CREATING NEW USER
   // Hashing The Password
@@ -43,19 +32,15 @@ const registerUser = asyncHandler(async (req, res) => {
   // Creating New User
   const user = await createUser(userData);
 
-  // Generating Token For User
-  const authToken = generateAuthToken({ id: user.id });
-
   const response = new ApiResponse(201, 'User Created Successfully', {
     id: user.id,
     data: user,
-    authToken,
   });
 
   return res.status(201).json(response.toJSON());
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+export const loginUser = asyncHandler(async (req, res) => {
   // VALIDATING REQ BODY
   const validationResult = loginBodySchema.safeParse(req.body);
 
@@ -110,7 +95,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 // Always Use auth middleware before this route
-const getUserProfile = asyncHandler((req, res) => {
+export const getUserProfile = asyncHandler((req, res) => {
   const user = req?.user;
 
   if (!user) {
@@ -125,7 +110,7 @@ const getUserProfile = asyncHandler((req, res) => {
   return res.status(200).json(response.toJSON());
 });
 
-const logoutUser = asyncHandler(async (req, res) => {
+export const logoutUser = asyncHandler(async (req, res) => {
   const token = req?.authToken;
 
   if (!token) {
@@ -151,5 +136,3 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   throw new ApiError(500, 'Unable to Logout User');
 });
-
-export { registerUser, loginUser, getUserProfile, logoutUser };

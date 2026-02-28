@@ -1,5 +1,24 @@
 import z from 'zod';
 
+const baseRegisterationFields = {
+  firstname: z
+    .string()
+    .min(3, 'Minimum 03 characters are required in firstname')
+    .max(50, 'Maximum 50 characters are allowed in the firstname'),
+  lastname: z
+    .string()
+    .min(3, 'Minimum 03 characters are required in lastname')
+    .max(50, 'Maximum 50 characters are allowed in the lastname')
+    .optional(),
+  email: z.email().max(128, 'Maximum 128 characters are allowed in the email'),
+  socketId: z.string().optional(),
+  password: z
+    .string()
+    .min(6, 'Password must have minimum 06 characters')
+    .max(16, 'Password must have maximum 16 characters')
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{6,}$/),
+};
+
 // USER RELATED SCHEMA
 export const userSchema = z.object({
   firstname: z
@@ -19,23 +38,7 @@ export const userSchema = z.object({
   socketId: z.string().optional(),
 });
 
-export const registerBodySchema = z.object({
-  firstname: z
-    .string()
-    .min(3, 'Minimum 03 characters are required in firstname')
-    .max(50, 'Maximum 50 characters are allowed in the firstname'),
-  lastname: z
-    .string()
-    .min(3, 'Minimum 03 characters are required in lastname')
-    .max(50, 'Maximum 50 characters are allowed in the lastname')
-    .optional(),
-  email: z.email().max(128, 'Maximum 128 characters are allowed in the email'),
-  password: z
-    .string()
-    .min(6, 'Password must have minimum 06 characters')
-    .max(16, 'Password must have maximum 16 characters')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{6,}$/),
-});
+export const registerUserBodySchema = z.object(baseRegisterationFields);
 
 export const loginBodySchema = z.object({
   email: z.email().max(128, 'Maximum 128 characters are required in the email'),
@@ -61,8 +64,11 @@ export const captainSchema = z.object({
   socketId: z.string().optional(),
 });
 
+// Add this to your validation.js
+export const registerCaptainBodySchema = z.object(baseRegisterationFields);
+
 // VEHICLE RELATED SCHEMAS
-const vehicleTypeEnums = z.enum(['car', 'bike', 'rickshaw']); // Vehicle type enums
+const vehicleTypeEnums = z.enum(['bike', 'rickshaw', 'car']); // Vehicle type enums
 export const vehicleSchema = z.object({
   vehicleType: vehicleTypeEnums,
   capacity: z.number().positive().min(1).default(1),
@@ -77,5 +83,25 @@ export const vehicleSchema = z.object({
   isActive: z.boolean().default(false),
   lat: z.number().optional(),
   lng: z.number().optional(),
-  captainId: z.number().positive(),
+  captainId: z.number().int().positive('Captain ID must be a positive integer'),
+});
+
+export const registerVehicleSchema = z.object({
+  vehicleType: vehicleTypeEnums,
+  capacity: z.coerce.number().positive().min(1).default(1),
+  plate: z
+    .string()
+    .min(3, 'Minimum 03 characters are required for vehicle plate')
+    .max(10, 'Vehicle plate cannot have more than 10 characters'),
+  color: z
+    .string()
+    .max(20, 'Maximum 20 characters are allowed in color name / value')
+    .optional(),
+  isActive: z.boolean().default(false),
+  lat: z.coerce.number().optional(),
+  lng: z.coerce.number().optional(),
+  captainId: z.coerce
+    .number()
+    .int()
+    .positive('Captain ID must be a positive integer'),
 });

@@ -1,6 +1,6 @@
 {
-  "id": "ae23994f-2668-4c26-bb3e-6cda77618631",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "70f384b2-2385-46e4-8fb9-9f8468907d85",
+  "prevId": "c5e5fae4-e5ae-4982-8142-c0265ce60144",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -86,8 +86,8 @@
           "method": "btree",
           "with": {}
         },
-        "captains_socked_id_idx": {
-          "name": "captains_socked_id_idx",
+        "captains_socket_id_idx": {
+          "name": "captains_socket_id_idx",
           "columns": [
             {
               "expression": "socket_id",
@@ -279,8 +279,8 @@
           "method": "btree",
           "with": {}
         },
-        "users_socked_id_idx": {
-          "name": "users_socked_id_idx",
+        "users_socket_id_idx": {
+          "name": "users_socket_id_idx",
           "columns": [
             {
               "expression": "socket_id",
@@ -366,15 +366,29 @@
         },
         "lat": {
           "name": "lat",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false
         },
         "lng": {
           "name": "lng",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         },
         "captain_id": {
           "name": "captain_id",
@@ -487,7 +501,7 @@
       "schema": "public",
       "values": [
         "bike",
-        "rikshaw",
+        "rickshaw",
         "car"
       ]
     }
