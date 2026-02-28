@@ -34,6 +34,10 @@ class ApiError {
   static notFound(message = 'Not Found', errors = []) {
     return new ApiError(404, message, errors);
   }
+
+  static internalServerError(message = 'Internal Server Error', errors = []) {
+    return new ApiError(500, message, errors);
+  }
 }
 
 export { ApiError };

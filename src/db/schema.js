@@ -6,21 +6,38 @@ import {
   timestamp,
   index,
   boolean,
-  pgEnum,
+  pgEnum as pgEnumFn,
 } from 'drizzle-orm/pg-core';
 
-import { relations } from 'drizzle-orm';
+import { eq, relations } from 'drizzle-orm';
+
+// Define the enum properly
+export const vehicleTypeEnum = pgEnumFn('vehicle_type', [
+  'bike',
+  'rikshaw',
+  'car',
+]);
+
 // USER SCHEMA
-export const users = pgTable('users', {
-  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  firstname: varchar('first_name', { length: 50 }).notNull(),
-  lastname: varchar('last_name', { length: 50 }),
-  email: varchar('email', { length: 128 }).notNull().unique(),
-  password: text('password').notNull(),
-  socketId: text('socket_id'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
+export const users = pgTable(
+  'users',
+  {
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    firstname: varchar('first_name', { length: 50 }).notNull(),
+    lastname: varchar('last_name', { length: 50 }),
+    email: varchar('email', { length: 128 }).notNull().unique(),
+    password: text('password').notNull(),
+    socketId: text('socket_id'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  userTable => {
+    return {
+      emailIdx: index('users_email_idx').on(userTable.email),
+      socketIdIdx: index('users_socked_id_idx').on(userTable.socketId),
+    };
+  }
+);
 
 // TOKEN BLACKLIST
 export const tokenBlacklist = pgTable(
@@ -60,20 +77,21 @@ export const captains = pgTable(
       vehiclesRelation: relations(captainTable, ({ many }) => ({
         vehicles: many(vehicles),
       })),
+      emailIdx: index('captains_email_idx').on(captainTable.email),
+      socketIdIdx: index('captains_socked_id_idx').on(captainTable.socketId),
     };
   }
 );
 
 // VEHICLE SCHEMA
-const vehicleTypeEnums = pgEnum('vehicle_type', ['bike', 'rikshaw', 'car']); // Vehicle Type Enums
 
 export const vehicles = pgTable(
   'vehicles',
   {
     id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-    vehicleType: vehicleTypeEnums('vehicle_type').notNull(),
+    vehicleType: vehicleTypeEnum('vehicle_type').notNull(),
     capacity: integer('capacity').default(1),
-    plate: varchar('plate', { length: 10 }).notNull(),
+    plate: varchar('plate', { length: 10 }).notNull().unique(),
     color: varchar('color', { length: 20 }),
     isActive: boolean('is_active').default(false),
     lat: integer('lat'),
@@ -93,6 +111,14 @@ export const vehicles = pgTable(
           references: [captains.id],
         }),
       })),
+      // Vehicle Indexes
+      plateIdx: index('vehicles_plate_idx').on(vehicleTable.plate),
+      isActiveIdx: index('vehicles_is_active_idx').on(vehicleTable.isActive),
+      captainIdIdx: index('vehicles_captain_id_idx').on(vehicleTable.captainId),
+      locationIdx: index('vehicles_location_idx').on(
+        vehicleTable.lat,
+        vehicleTable.lng
+      ),
     };
   }
 );

@@ -4,6 +4,8 @@ import cookieParser from 'cookie-parser';
 
 // ROUTES
 import { userRoute } from './routes/user.route.js';
+import { captainRoute } from './routes/captain.route.js';
+
 import { CORS_ORIGIN } from './config/config.js';
 import { notFound } from './middlewares/notFound.middleware.js';
 import { errorHandler } from './middlewares/error.middleware.js';
@@ -26,6 +28,7 @@ app.get('/', (req, res) => {
 
 // Adding User Route
 app.use('/users', userRoute);
+app.use('/captains', captainRoute);
 
 // 404 Handler
 app.use(notFound);

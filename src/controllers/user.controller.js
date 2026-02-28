@@ -10,12 +10,12 @@ import { blacklistToken } from '../utils/authToken.utils.js';
 import { createUser, findUserByEmail } from '../utils/user.util.js';
 import {
   loginBodySchema,
-  registerBodySchema,
+  registerUserBodySchema,
 } from '../validation/validation.js';
 
 const registerUser = asyncHandler(async (req, res) => {
   // VALIDATING REQUEST BODY
-  const validationResult = registerBodySchema.safeParse(req.body);
+  const validationResult = registerUserBodySchema.safeParse(req.body);
   if (!validationResult.success) {
     throw new ApiError(
       400,
@@ -25,13 +25,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const reqBody = validationResult.data;
-
-  // VALIDATING IF USER ALREADY EXISTS
-  const existingUser = await findUserByEmail(reqBody.email);
-
-  if (existingUser) {
-    throw new ApiError(400, 'Unable to register User, Email already exists');
-  }
 
   // CREATING NEW USER
   // Hashing The Password
@@ -43,13 +36,9 @@ const registerUser = asyncHandler(async (req, res) => {
   // Creating New User
   const user = await createUser(userData);
 
-  // Generating Token For User
-  const authToken = generateAuthToken({ id: user.id });
-
   const response = new ApiResponse(201, 'User Created Successfully', {
     id: user.id,
     data: user,
-    authToken,
   });
 
   return res.status(201).json(response.toJSON());

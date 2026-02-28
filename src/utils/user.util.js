@@ -22,16 +22,28 @@ const createUser = async userData => {
     const data = validateUserSchema(userData);
 
     // Creating New User
-    const queryResult = await db.insert(users).values(data).returning();
+    const queryResult = await db
+      .insert(users)
+      .values(data)
+      .onConflictDoNothing({ target: users.email })
+      .returning({
+        id: users.id,
+        firstname: users.firstname,
+        lastname: users.lastname,
+        email: users.lastname,
+        socketId: users.socketId,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+      });
+
+    if (queryResult?.length === 0) {
+      throw new ApiError(400, 'Unable to register User, Email already exists');
+    }
+
     const user = Array.isArray(queryResult) ? queryResult[0] : queryResult;
-    const { id, firstname, lastname, email } = user;
-    return { id, firstname, lastname, email };
+    return user;
   } catch (error) {
-    throw new ApiError(
-      500,
-      `Error occurred during user creation: ${error.message}`,
-      error
-    );
+    throw error;
   }
 };
 

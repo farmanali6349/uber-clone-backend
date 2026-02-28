@@ -19,7 +19,7 @@ export const userSchema = z.object({
   socketId: z.string().optional(),
 });
 
-export const registerBodySchema = z.object({
+export const registerUserBodySchema = z.object({
   firstname: z
     .string()
     .min(3, 'Minimum 03 characters are required in firstname')
@@ -30,6 +30,7 @@ export const registerBodySchema = z.object({
     .max(50, 'Maximum 50 characters are allowed in the lastname')
     .optional(),
   email: z.email().max(128, 'Maximum 128 characters are allowed in the email'),
+  socketId: z.string().optional(),
   password: z
     .string()
     .min(6, 'Password must have minimum 06 characters')
@@ -81,6 +82,7 @@ export const registerCaptainBodySchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{6,}$/,
       'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.'
     ),
+  socketId: z.string().optional(),
 });
 // VEHICLE RELATED SCHEMAS
 const vehicleTypeEnums = z.enum(['bike', 'rikshaw', 'car']); // Vehicle type enums
