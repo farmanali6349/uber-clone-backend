@@ -13,7 +13,7 @@ import {
   registerUserBodySchema,
 } from '../validation/validation.js';
 
-const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
   // VALIDATING REQUEST BODY
   const validationResult = registerUserBodySchema.safeParse(req.body);
   if (!validationResult.success) {
@@ -44,7 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
   return res.status(201).json(response.toJSON());
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+export const loginUser = asyncHandler(async (req, res) => {
   // VALIDATING REQ BODY
   const validationResult = loginBodySchema.safeParse(req.body);
 
@@ -99,7 +99,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 // Always Use auth middleware before this route
-const getUserProfile = asyncHandler((req, res) => {
+export const getUserProfile = asyncHandler((req, res) => {
   const user = req?.user;
 
   if (!user) {
@@ -114,7 +114,7 @@ const getUserProfile = asyncHandler((req, res) => {
   return res.status(200).json(response.toJSON());
 });
 
-const logoutUser = asyncHandler(async (req, res) => {
+export const logoutUser = asyncHandler(async (req, res) => {
   const token = req?.authToken;
 
   if (!token) {
@@ -140,5 +140,3 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   throw new ApiError(500, 'Unable to Logout User');
 });
-
-export { registerUser, loginUser, getUserProfile, logoutUser };

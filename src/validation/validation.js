@@ -102,3 +102,23 @@ export const vehicleSchema = z.object({
   lng: z.number().optional(),
   captainId: z.number().int().positive('Captain ID must be a positive integer'),
 });
+
+export const registerVehicleSchema = z.object({
+  vehicleType: vehicleTypeEnums,
+  capacity: z.coerce.number().positive().min(1).default(1),
+  plate: z
+    .string()
+    .min(3, 'Minimum 03 characters are required for vehicle plate')
+    .max(10, 'Vehicle plate cannot have more than 10 characters'),
+  color: z
+    .string()
+    .max(20, 'Maximum 20 characters are allowed in color name / value')
+    .optional(),
+  isActive: z.boolean().default(false),
+  lat: z.coerce.number().optional(),
+  lng: z.coerce.number().optional(),
+  captainId: z.coerce
+    .number()
+    .int()
+    .positive('Captain ID must be a positive integer'),
+});

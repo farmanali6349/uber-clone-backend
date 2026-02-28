@@ -17,9 +17,9 @@ export const createCaptain = async data => {
       .returning({
         id: captains.id,
         firstname: captains.firstname,
-        lastname: captains.lastname,
+        lastname: captains?.lastname,
         email: captains.email,
-        socketId: captains.socketId,
+        socketId: captains?.socketId,
         createdAt: captains.createdAt,
         updatedAt: captains.updatedAt,
       });

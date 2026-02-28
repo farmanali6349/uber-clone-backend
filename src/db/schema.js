@@ -96,6 +96,8 @@ export const vehicles = pgTable(
     isActive: boolean('is_active').default(false),
     lat: integer('lat'),
     lng: integer('lng'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
     captainId: integer('captain_id')
       .notNull()
       .references(() => captains.id, {
